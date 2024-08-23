@@ -20,10 +20,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())  // Disable CSRF protection (not recommended for production)
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/users/signup","/api/users/login").permitAll()  // Allow access to signup
-
-
+                .authorizeHttpRequests(
+                        authorizeRequests -> authorizeRequests.anyRequest()
+                                .permitAll()
                 )
                 .formLogin(form -> form.disable());  // Disable form login
 
