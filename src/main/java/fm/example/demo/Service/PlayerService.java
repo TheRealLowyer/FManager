@@ -17,9 +17,7 @@ public class PlayerService {
         return playerRepository.findAll();
     }
 
-    public List<Player> getPlayersByTeamId(String teamId) {
-        return playerRepository.findByTeamId(teamId);
-    }
+
 
     public Player createPlayer(Player player) {
         return playerRepository.save(player);
@@ -28,7 +26,5 @@ public class PlayerService {
     public void deletePlayer(String id) {
         playerRepository.deleteById(id);
     }
-    public List<Player> getUnassignedPlayers() {
-        return playerRepository.findByTeamId(null);
-    }
+
 }

@@ -1,12 +1,12 @@
 package fm.example.demo.Entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DBRef;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 
 import java.util.Date;
 
-@Document(collection = "messages")
+@Entity(name = "messages")
 public class Message {
 
     @Id
@@ -18,7 +18,7 @@ public class Message {
     private String time;
     private String message;
 
-    @DBRef
+    @ManyToOne
     private Forum forum; // Reference to the Forum
 
     // Getters and Setters

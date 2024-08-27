@@ -20,10 +20,7 @@ public class PlayerController {
         return ResponseEntity.ok(playerService.getAllPlayers());
     }
 
-    @GetMapping("/team/{teamId}")
-    public ResponseEntity<List<Player>> getPlayersByTeamId(@PathVariable String teamId) {
-        return ResponseEntity.ok(playerService.getPlayersByTeamId(teamId));
-    }
+
 
     @PostMapping
     public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
