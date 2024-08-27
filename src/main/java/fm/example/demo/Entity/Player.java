@@ -9,16 +9,28 @@ public class Player {
     @Id
     private String id;
     private String name;
-    private String position;
+    private String surname;
+    private Position position;
     private String teamId;
 
     // Constructors, Getters, and Setters
     public Player() {}
+    public enum Position{
+        GK,DEF,MID,FOR
+    }
 
-    public Player(String name, String position, String teamId) {
+    public Player(String name, Position position, String teamId) {
         this.name = name;
         this.position = position;
         this.teamId = teamId;
+    }
+
+    public String getSurname() {
+        return surname;
+    }
+
+    public void setSurname(String surname) {
+        this.surname = surname;
     }
 
     public String getId() {
@@ -37,11 +49,11 @@ public class Player {
         this.name = name;
     }
 
-    public String getPosition() {
+    public Position getPosition() {
         return position;
     }
 
-    public void setPosition(String position) {
+    public void setPosition(Position position) {
         this.position = position;
     }
 
