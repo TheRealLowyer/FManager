@@ -1,67 +1,50 @@
 package fm.example.demo.Entity;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Document(collection = "players")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity(name = "players")
 public class Player {
 
     @Id
-    private String id;
+    private Long id;
     private String name;
     private String surname;
     private Position position;
-    private String teamId;
+    @ManyToOne
+    @JoinColumn(name = "team_id")
+    @JsonIgnoreProperties({"players"})
+    private Team team;
 
-    // Constructors, Getters, and Setters
-    public Player() {}
-    public enum Position{
-        GK,DEF,MID,FOR
+    public enum Position {
+        GK, DEF, MID, FOR
     }
+    private int age;
+    @Column(columnDefinition = "LONGTEXT")
+    private String base64Photo;
+    // New fields with validation
+    private int experience;
+    private int playerCondition;
+    private int health;
+    private int moral;
+    private int form;
+    private int reflex;
+    private int handControl;
+    private int turnOver;
+    private int headControl;
+    private int speed;
+    private int ortaAçma;
+    private int pass;
+    private int shoot;
+    private int technic;
+    private int power;
 
-    public Player(String name, Position position, String teamId) {
-        this.name = name;
-        this.position = position;
-        this.teamId = teamId;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Position getPosition() {
-        return position;
-    }
-
-    public void setPosition(Position position) {
-        this.position = position;
-    }
-
-    public String getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(String teamId) {
-        this.teamId = teamId;
-    }
 }

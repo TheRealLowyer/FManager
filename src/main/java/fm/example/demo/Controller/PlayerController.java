@@ -3,36 +3,34 @@ package fm.example.demo.Controller;
 import fm.example.demo.Entity.Player;
 import fm.example.demo.Service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/players")
+@RequestMapping("/players")
 public class PlayerController {
 
     @Autowired
     private PlayerService playerService;
 
-    @GetMapping
-    public ResponseEntity<List<Player>> getAllPlayers() {
-        return ResponseEntity.ok(playerService.getAllPlayers());
+    @GetMapping("/{id}")
+    public Optional<Player> getPlayerById(@PathVariable Long id) {
+        return playerService.getPlayerById(id);
     }
 
     @GetMapping("/team/{teamId}")
-    public ResponseEntity<List<Player>> getPlayersByTeamId(@PathVariable String teamId) {
-        return ResponseEntity.ok(playerService.getPlayersByTeamId(teamId));
+    public List<Player> getAllPlayersByTeamID(@PathVariable Long teamId) {
+        return playerService.getAllPlayersByTeamID(teamId);
     }
-
-    @PostMapping
-    public ResponseEntity<Player> createPlayer(@RequestBody Player player) {
-        return ResponseEntity.ok(playerService.createPlayer(player));
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePlayer(@PathVariable String id) {
-        playerService.deletePlayer(id);
-        return ResponseEntity.noContent().build();
+    @PostMapping("/add")
+    public String addPlayer(@RequestBody Player player) {
+        if (playerService.existsById(player.getId())) {
+            return "Player with ID " + player.getId() + " already exists.";
+        } else {
+            playerService.addPlayer(player);
+            return "Player added successfully.";
+        }
     }
 }

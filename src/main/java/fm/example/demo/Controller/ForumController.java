@@ -4,41 +4,47 @@ import fm.example.demo.Entity.Forum;
 import fm.example.demo.Entity.Message;
 import fm.example.demo.Service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/forums")
+@RequestMapping("/forums")
 public class ForumController {
 
     @Autowired
     private ForumService forumService;
 
-    @GetMapping
-    public ResponseEntity<List<Forum>> getAllForums() {
-        List<Forum> forums = forumService.getAllForums();
-        return ResponseEntity.ok(forums);
+    @PostMapping("/create")
+    public Forum createForum(@RequestBody Forum forum) {
+        return forumService.createForum(forum);
     }
 
-    @GetMapping("/{forumId}/messages")
-    public ResponseEntity<List<Message>> getMessagesFromForum(@PathVariable String forumId) {
-        List<Message> messages = forumService.getMessagesFromForum(forumId);
-        if (messages != null && !messages.isEmpty()) {
-            return ResponseEntity.ok(messages);
-        }
-        return ResponseEntity.notFound().build();
+    @GetMapping("/{id}")
+    public Optional<Forum> getForumById(@PathVariable String id) {
+        return forumService.getForumById(id);
+    }
+    @GetMapping("/{id}/messages")
+    public Page<Message> getMessagesPaged(
+            @PathVariable String id,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return forumService.getMessagesPaged(id, PageRequest.of(page, size));
     }
 
-    @PostMapping("/{forumId}/add")
-    public ResponseEntity<Forum> addMessageToForum(@PathVariable String forumId, @RequestBody Message message) {
-        Forum forum = forumService.addMessageToForum(forumId, message);
-        if (forum != null) {
-            return ResponseEntity.ok(forum);
-        }
-        return ResponseEntity.notFound().build();
+    @GetMapping("/all")
+    public List<Forum> getAllForums() {
+        return forumService.getAllForums();
     }
 
-    // Other methods...
+    // New endpoint for pagination
+    @GetMapping("/paged")
+    public Page<Forum> getForumsPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "") String forumName) {
+        return forumService.getForumsPaged(page, size, forumName);
+    }
 }

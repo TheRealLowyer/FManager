@@ -3,8 +3,8 @@ package fm.example.demo.Service;
 import fm.example.demo.Entity.Forum;
 import fm.example.demo.Entity.Message;
 import fm.example.demo.Repo.ForumRepository;
-import fm.example.demo.Repo.MessageRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,42 +14,42 @@ import java.util.Optional;
 public class ForumService {
 
     @Autowired
-    private ForumRepository ForumRepository;
+    private ForumRepository forumRepository;
 
-    @Autowired
-    private MessageRepository MessageRepository;
+    public Forum createForum(Forum forum) {
+        return forumRepository.save(forum);
+    }
+
+    public Optional<Forum> getForumById(String id) {
+        return forumRepository.findById(id);
+    }
 
     public List<Forum> getAllForums() {
-        return ForumRepository.findAll();
+        return forumRepository.findAll();
     }
-
-
-    public List<Message> getMessagesFromForum(String forumId) {
-        Forum forum = ForumRepository.findById(forumId).orElse(null);
-        if (forum != null) {
-            return forum.getMessages();
+    public Page<Message> getMessagesPaged(String forumId, Pageable pageable) {
+        Optional<Forum> forum = forumRepository.findById(forumId);
+        if (forum.isPresent()) {
+            List<Message> messages = forum.get().getMessages();
+            int start = (int) pageable.getOffset();
+            int end = Math.min((start + pageable.getPageSize()), messages.size());
+            List<Message> subList = messages.subList(start, end);
+            return new PageImpl<>(subList, pageable, messages.size());
         }
-        return null;
+        return Page.empty();
     }
 
-    public Forum addMessageToForum(String forumId, Message message) {
-        Optional<Forum> forumOptional = ForumRepository.findById(forumId);
-        if (forumOptional.isPresent()) {
-            Forum forum = forumOptional.get();
+    // New method for paginated forums
+    public Page<Forum> getForumsPaged(int page, int size, String forumName) {
+        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Order.asc("forumType").ignoreCase(), Sort.Order.asc("forumName")));
 
-            // Set the forum reference in the message
-            message.setForum(forum);
-
-            // Save the message to the database
-            MessageRepository.save(message);
-
-            // Add the message to the forum's message list
-            forum.getMessages().add(message);
-
-            return ForumRepository.save(forum);
+        if (forumName != null && !forumName.isEmpty()) {
+            // Search by forum name and prioritize GENERAL forums first
+            return forumRepository.findByForumNameContainingIgnoreCase(forumName, pageRequest);
+        } else {
+            // Retrieve all forums, prioritizing GENERAL forums first
+            return forumRepository.findAll(pageRequest);
         }
-        return null;
     }
 
-    // Other methods...
 }

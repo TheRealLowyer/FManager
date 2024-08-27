@@ -1,12 +1,11 @@
 package fm.example.demo.Repo;
 
 import fm.example.demo.Entity.Forum;
-import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public interface ForumRepository extends MongoRepository<Forum, String> {
-
-    // Additional custom queries if needed
+public interface ForumRepository extends JpaRepository<Forum, String> {
+    Page<Forum> findByForumNameContainingIgnoreCase(String forumName, Pageable pageable);
 
 }

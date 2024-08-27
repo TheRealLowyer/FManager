@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PlayerService {
@@ -13,22 +14,17 @@ public class PlayerService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    public List<Player> getAllPlayers() {
-        return playerRepository.findAll();
+    public Optional<Player> getPlayerById(Long id) {
+        return playerRepository.findById(id);
     }
 
-    public List<Player> getPlayersByTeamId(String teamId) {
+    public List<Player> getAllPlayersByTeamID(Long teamId) {
         return playerRepository.findByTeamId(teamId);
     }
-
-    public Player createPlayer(Player player) {
+    public Player addPlayer(Player player) {
         return playerRepository.save(player);
     }
-
-    public void deletePlayer(String id) {
-        playerRepository.deleteById(id);
-    }
-    public List<Player> getUnassignedPlayers() {
-        return playerRepository.findByTeamId(null);
+    public boolean existsById(Long id) {
+        return playerRepository.existsById(id); // Use the repository method to check existence
     }
 }
